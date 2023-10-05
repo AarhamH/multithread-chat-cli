@@ -1,3 +1,7 @@
+// Name: Aarham Haider
+// Computing ID: aah13
+// Student ID: 301462422
+
 #include "list.h"
 #include <stdio.h>
 #include <stdlib.h>
