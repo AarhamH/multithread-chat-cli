@@ -284,7 +284,7 @@ void *List_remove(List *pList)
         ResetList(pList);
         pList->Bound = LIST_OOB_END;
         ReleaseNode(CurrentNode);
-        return NULL;
+        return CurrentItem;
     }
 
     if (BeforeList(pList) || AfterList(pList)) { return NULL; }
