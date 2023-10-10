@@ -9,7 +9,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-
+#include "transmit.h"
 
 //AddressInfo structs and endpoints
 static int SocketEndpointValue = -1;
@@ -85,6 +85,10 @@ void SetupUDPSender(char* hostname, char* port, List* list)
                 perror("Error: Unable to send message");
                 return;
               }
+              printf("Succesfully Sent Bytes: %d\n", Bytes);
+              printf("Sent message: %s\n", ListMessage);
+              printf("Sent to address: %s\n", inet_ntoa(((struct sockaddr_in*)ListTraverse->ai_addr)->sin_addr));
+              printf("Sent to port: %d\n", ntohs(((struct sockaddr_in*)ListTraverse->ai_addr)->sin_port));
         }
 
     }
@@ -107,11 +111,12 @@ void CloseUDPSender()
 // *4.) When testing is done, complete the header by defining SetupUDPSender and CloseUDPSender
 int main() 
 {
+    printf("Welcome\n");
     // Sample input
-    char* hostname = "asb9700u-j08"; // Replace with your target hostname
-    char* port = "9999999999999"; // Replace with the target port
+    char* hostname = "asb9700u-g06"; // Replace with your target hostname
+    char* port = "999999999999999999"; // Replace with the target port
     List* messageList = List_create();
-  
+    
     
     // Sample messages
     List_insert_after(messageList, "Hello, world!");
@@ -125,7 +130,7 @@ int main()
     SetupUDPSender(hostname, port, messageList);
 
     // Simulate sending messages for a few seconds
-    sleep(5); // Adjust the duration as needed
+    sleep(3); // Adjust the duration as needed
 
     // Shutdown the sender
     CloseUDPSender();
