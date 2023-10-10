@@ -5,7 +5,6 @@
 #include "list.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
 
 // **** GLOBAL VARIABLES TO HANDLE STATIC ARRAYS **** //
 Node NodeArray[LIST_MAX_NUM_NODES];
@@ -18,7 +17,7 @@ bool IsInitialized = false;
 
 List *FreeList;
 Node *FreeNode;
-static pthread_mutex_t QueueMutex = PTHREAD_MUTEX_INITIALIZER;
+
 
 // **** HELPER FUNCTIONS TO COMMUNICATE DETAILS ABOUT LINKED LISTS **** //
 bool IsEmpty(List *pList) { return pList->Count == 0; }
@@ -410,39 +409,4 @@ void *List_search(List *pList, COMPARATOR_FN pComparator, void *pComparisonArg)
 
     pList->Bound = LIST_OOB_END;
     return NULL;
-}
-
-int List_input(List* list, char* message)
-{
-    int InputValue;
-    pthread_mutex_lock(&QueueMutex);
-    {
-        InputValue = List_prepend(list, message);
-    }
-    pthread_mutex_unlock(&QueueMutex);
-    return InputValue;
-}
-
-char* List_output(List* list)
-{
-    char* Message;
-    pthread_mutex_lock(&QueueMutex);
-    {
-        Message = List_trim(list);
-    }
-    pthread_mutex_unlock(&QueueMutex);
-
-    return Message;
-}
-
-int List_lockedCount(List* list)
-{
-    int Count;
-    pthread_mutex_lock(&QueueMutex);
-    {
-        Count = List_count(list);
-    }
-    pthread_mutex_unlock(&QueueMutex);
-
-    return Count;
 }

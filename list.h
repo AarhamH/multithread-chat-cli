@@ -127,9 +127,4 @@ void List_free(List* pList, FREE_FN pItemFreeFn);
 typedef bool (*COMPARATOR_FN)(void* pItem, void* pComparisonArg);
 void* List_search(List* pList, COMPARATOR_FN pComparator, void* pComparisonArg);
 
-// These methods are used for pthread List I/O
-int List_input(List* list, char* message);
-char* List_output(List* list);
-int List_lockedCount(List* list);
-
 #endif
