@@ -99,6 +99,3 @@ void CloseWriter()
 
     pthread_join(Writer, NULL);
 }
-
-
-
