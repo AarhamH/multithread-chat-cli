@@ -7,24 +7,30 @@
 #include "list.h"
 
 static pthread_t Writer;
-static pthread_mutex_t AvailableWriterMutex = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t AvailableWriterCond = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t WriterMutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t WriterCond = PTHREAD_COND_INITIALIZER;
 static List* LList;
 static char* Message;
 
 
 // <summary> This method unloads all of the messages in the queue. The method waits for a signal based on the 
 //           Cond; when it recieves the signal, writer unloads everything in the list
-static void* WriterUnload(){
+
+void WaitForSignal(pthread_mutex_t *MutexArg, pthread_cond_t *CondArg)
+{
+        pthread_mutex_lock(MutexArg);
+        {
+            pthread_cond_wait(CondArg, MutexArg);
+        }
+        pthread_mutex_unlock(MutexArg);
+}
+
+static void* WriteUnload(){
 
     while(1)
     {
         // Wait for signal before proceeding
-        pthread_mutex_lock(&AvailableWriterMutex);
-        {
-            pthread_cond_wait(&AvailableWriterCond, &AvailableWriterMutex);
-        }
-        pthread_mutex_unlock(&AvailableWriterMutex);
+        WaitForSignal(&WriterMutex,&WriterCond);
         
         int Traverser = 0;
         
@@ -38,7 +44,7 @@ static void* WriterUnload(){
 
             if(!Message)
             {
-                printf("Error: Trimming did not work!.\n");
+                printf("Error: output not worky uWu");
                 break;
             }
 
@@ -64,13 +70,13 @@ static void* WriterUnload(){
 }
 
 // <summary> Sets up writer with a linked list and creates a thread with unload function
-void SetupWriter(List* l){
+void SetupWriter(List* ListArg){
 
-    LList = l;
+    LList = ListArg;
 
-    int writingThread =  pthread_create(&Writer, NULL, WriterUnload, NULL);
+    int writingThread =  pthread_create(&Writer, NULL, WriteUnload, NULL);
     if(writingThread != 0){
-        perror("write thread failed");
+        printf("Error: thread not created");
         exit(-1);
     }
 
@@ -78,9 +84,11 @@ void SetupWriter(List* l){
 
 // <summary> This method signals the writer that there are messages to be unloaded
 void SignalWriter() {
-    pthread_mutex_lock(&AvailableWriterMutex);
-    pthread_cond_signal(&AvailableWriterCond);
-    pthread_mutex_unlock(&AvailableWriterMutex);
+    pthread_mutex_lock(&WriterMutex);
+    {
+    pthread_cond_signal(&WriterCond);
+    }
+    pthread_mutex_unlock(&WriterMutex);
 }
 
 // <summary> This method cancels the writer thread, stopping it from further operations

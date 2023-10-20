@@ -1,14 +1,9 @@
-#ifndef _WRITE_OUTPUT_H
-#define _WRITE_OUTPUT_H
+#ifndef WRITE
+#define WRITE
 
-#include "list.h"
-
-// Writer module, will print to the screen
-// Starts a new pthread
-
-void writerSignaller();
+void SignalWriter();
 void SetupWriter(List* l);
-void writerCancel();
+void CancelWriter();
 void CloseWriter();
 
 #endif
