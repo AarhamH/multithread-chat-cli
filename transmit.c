@@ -34,7 +34,7 @@ static pthread_cond_t SendAvailableCond = PTHREAD_COND_INITIALIZER;
 
 
 // <summary> This method sets up the hint conditions to create a GetAddress number
-struct addrinfo SetupHints(struct addrinfo HintsArg)
+struct addrinfo TSetupHints(struct addrinfo HintsArg)
 {
     memset(&HintsArg, 0 ,sizeof (HintsArg));
     HintsArg.ai_family = AF_INET;
@@ -45,7 +45,7 @@ struct addrinfo SetupHints(struct addrinfo HintsArg)
 
 
 // <summary> This method finds an available socket and sets the endpoint. Returns -1 by default if none are found.
-int SetupSocket(int Fd)
+int TSetupSocket(int Fd)
 {
     for (ListTraverse = ServInfo; ListTraverse != NULL; ListTraverse = ListTraverse->ai_next) {
         Fd = socket(ListTraverse->ai_family, ListTraverse->ai_socktype, ListTraverse->ai_protocol);
@@ -60,7 +60,7 @@ int SetupSocket(int Fd)
 }
 
 // <summary> This method trims the messages one by one until none is left. Called by SetupUnload()
-void* UnloadMessages()
+void* TUnloadMessages()
 {
         int Iteration = 0;
         int ListCount;
@@ -102,16 +102,16 @@ void* UnloadMessages()
 }
 
 // <summary> This method sets up a semaphore, if wait condition is lifted, calls UnloadMessages() to send all messages along socket
-static void* SenderUnload() {
+static void* TransmitUnload() {
     
-    Hints = SetupHints(Hints);
+    Hints = TSetupHints(Hints);
 
     if ((GetAddress = getaddrinfo(Hostname, Port, &Hints, &ServInfo)) != 0) {
         fprintf(stderr, "sender: getaddrinfo error: %s\n", gai_strerror(GetAddress));
         exit(-1);
     }
 
-    SocketEndPoint = SetupSocket(SocketEndPoint);
+    SocketEndPoint = TSetupSocket(SocketEndPoint);
 
     if (ListTraverse == NULL) {
         fprintf(stderr, "sender: failed to create socket");
@@ -125,14 +125,14 @@ static void* SenderUnload() {
         }
         pthread_mutex_unlock(&SendAvailableCondMutex);
         
-        UnloadMessages();
+        TUnloadMessages();
 
     }
     return NULL;
 }
 
 // <summary> This method is called by another thread to say that it is ready
-void senderSignaller() {
+void SignalTransmit() {
     pthread_mutex_lock(&SendAvailableCondMutex);
     {
       pthread_cond_signal(&SendAvailableCond);
@@ -141,18 +141,18 @@ void senderSignaller() {
 }
 
 // <summary> This method cancels sender
-void senderCancel() {
+void CancelTransmit() {
     pthread_cancel(SenderThread);
 }
 
 
 // <summary> This method initializes sender
-void senderInit(char* HostnameArg, char* PortArg, List* ListArg) {
+void SetupTransmit(char* HostnameArg, char* PortArg, List* ListArg) {
     Hostname = HostnameArg;
     Port = PortArg;
     LList = ListArg;
 
-    int StVal = pthread_create(&SenderThread, NULL, SenderUnload, NULL);
+    int StVal = pthread_create(&SenderThread, NULL, TransmitUnload, NULL);
     if (StVal != 0) {
         perror("sender: thread creation error");
         exit(-1);
@@ -160,7 +160,7 @@ void senderInit(char* HostnameArg, char* PortArg, List* ListArg) {
 }
 
 // <summary> This method frees all allocated messages and closes the sender thread
-void senderShutdown() {
+void CloseTransmit() {
     free(Message);
     Message = NULL;
 
