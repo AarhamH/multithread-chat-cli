@@ -1,11 +1,11 @@
-#ifndef TRANSMIT_H
-#define TRANSMIT_H
+#ifndef _SEND_UDP_H
+#define _SEND_UDP_H
 
-void senderInit(char* HostnameArg, char* PortArg, List* ListArg);
+#include "list.h"
+
+void senderInit(char* hostnm, char* p, List* l);
 void senderCancel();
 void senderShutdown();
 void senderSignaller();
 
-
 #endif
-
