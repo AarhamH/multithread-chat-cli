@@ -1,13 +1,8 @@
-#ifndef _READ_INPUT_H
-#define _READ_INPUT_H
+#ifndef READ
+#define READ
 
-#include "list.h"
-
-// Reads input from the keyboard
-// Starts a new pthread
-
-void readerInit(List* l);
-void readerShutdown();
-void readerCancel();
+void SetupRead(List* l);
+void CloseRead();
+void CancelRead();
 
 #endif

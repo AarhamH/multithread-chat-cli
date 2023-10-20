@@ -6,7 +6,7 @@
 
 #include "list.h"
 #include "read.h"
-#include "recieve.h"
+#include "receive.h"
 #include "transmit.h"
 
 static List* LList;
@@ -16,14 +16,14 @@ char BufferStorage[256];
 int Bytes;
 
 
-int SetBytes(int BytesArg)
+int RdSetBytes(int BytesArg)
 {
     memset(BufferStorage, 0, 256);
     BytesArg = read(0, BufferStorage, 256);
     return BytesArg;
 }
 
-char* SetMessageBuffer(char* MessageArg, int BytesArg)
+char* RdSetMessageBuffer(char* MessageArg, int BytesArg)
 {
   MessageArg = (char*)malloc(sizeof(char) * (BytesArg + 1));
   strncpy(MessageArg, BufferStorage, BytesArg);
@@ -40,13 +40,13 @@ static void* ReadUnload() {
         while (1) {
             Iteration++;
 
-            Bytes = SetBytes(Bytes);
+            Bytes = RdSetBytes(Bytes);
             if (Bytes == -1) {
                 printf("Error: not enough bytes allocated");
                 exit(-1);
             }
 
-            Message = SetMessageBuffer(Message,Bytes);
+            Message = RdSetMessageBuffer(Message,Bytes);
 
             int Res = List_input(LList,Message);
             if (Res == -1) {
@@ -55,15 +55,15 @@ static void* ReadUnload() {
 
             if (memcmp(Message, "!\n", 2) == 0) {
                 if (Iteration == 1) {
-                    senderSignaller();
-                    receiverCancel();
-                    senderCancel();
+                    SignalTransmit();
+                    CancelReceiver();
+                    CancelTransmit();
                     return NULL;
                 }
             }
 
             if (BufferStorage[Bytes - 1] == '\n' || Iteration == 100) {
-                senderSignaller();
+                SignalTransmit();
                 break;
             }
         }
@@ -71,7 +71,7 @@ static void* ReadUnload() {
     return NULL;
 }
 
-void readerInit(List* ListArg) {
+void SetupRead(List* ListArg) {
     LList = ListArg;
 
     int ReadingThread =  pthread_create(&ReaderThread, NULL, ReadUnload, NULL);
@@ -81,12 +81,12 @@ void readerInit(List* ListArg) {
     }
 }
 
-void readerCancel() 
+void CancelRead() 
 {
     pthread_cancel(ReaderThread);
 }
 
-void readerShutdown() 
+void CloseRead() 
 {
     pthread_join(ReaderThread, NULL);
 }
