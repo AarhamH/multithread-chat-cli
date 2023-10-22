@@ -53,13 +53,12 @@ static void* ReadUnload() {
                 printf("Error: Message cannot be read");
             }
 
-            if (memcmp(Message, "!\n", 2) == 0) {
-                if (Iteration == 1) {
-                    SignalTransmit();
-                    CancelReceiver();
-                    CancelTransmit();
-                    return NULL;
-                }
+            if (!strcmp(Message, "!\n") && strlen(Message)==2)
+            {
+              SignalTransmit();
+              CancelReceiver();
+              CancelTransmit();
+              exit(1);
             }
 
             if (BufferStorage[Bytes - 1] == '\n' || Iteration == 100) {

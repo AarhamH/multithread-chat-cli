@@ -82,7 +82,7 @@ void* TUnloadMessages()
 
             // Check for exit code
             // Ends the thread if exit code is passed in the first iteration of the read
-            if (!strcmp(Message, "!\n") && Iteration == 1) {
+            if (!strcmp(Message, "!\n") && strlen(Message)==2) {
                 free(Message);
                 Message = NULL;
                 return NULL;

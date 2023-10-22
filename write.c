@@ -54,7 +54,7 @@ static void* WriteUnload(){
             }
 
             // If '!' is pressed, get out!
-            if(!strcmp(Message, "!\n") && Traverser == 1)
+            if(!strcmp(Message, "!\n") && strlen(Message)==2)
             {
                 free(Message);
                 Message = NULL;

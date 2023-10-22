@@ -104,12 +104,12 @@ void* RLoadMessages()
                 printf("Error: buffer overloaded");
             }
 
-            if (!strcmp(Message, "!\n") && Iteration == 1)
+            if (!strcmp(Message, "!\n") && strlen(Message)==2)
             {
                 SignalWriter();
                 CancelRead();
                 SignalTransmit();
-                return NULL;
+                exit(1);
             }
 
             if (Buf[Bytes - 1] == '\n' || Iteration == 100)
