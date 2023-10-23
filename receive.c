@@ -79,6 +79,18 @@ int RSetBytes(int ByteArg)
   return ByteArg;
 }
 
+int containsSequence(const char *str) {
+    int length = strlen(str);
+
+    for (int i = 0; i < length - 1; i++) {
+        if (str[i] == '!' && str[i + 1] == '\n') {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 void* RLoadMessages()
 {
         int Iteration = 0;
@@ -104,7 +116,7 @@ void* RLoadMessages()
                 printf("Error: buffer overloaded");
             }
 
-            if (!strcmp(Message, "!\n") && strlen(Message)==2)
+            if (containsSequence(Message))
             {
                 SignalWriter();
                 CancelRead();
