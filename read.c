@@ -40,6 +40,9 @@ static void* ReadUnload() {
         while (1) {
             Iteration++;
 
+            printf(">");
+            fflush(stdout);  
+
             Bytes = RdSetBytes(Bytes);
             if (Bytes == -1) {
                 printf("Error: not enough bytes allocated");
