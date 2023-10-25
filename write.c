@@ -11,7 +11,7 @@ static pthread_mutex_t WriterMutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t WriterCond = PTHREAD_COND_INITIALIZER;
 static List* LList;
 static char* Message;
-
+char* ForeignHost;
 
 // <summary> This method unloads all of the messages in the queue. The method waits for a signal based on the 
 //           Cond; when it recieves the signal, writer unloads everything in the list
@@ -32,15 +32,15 @@ static void* WriteUnload(){
         // Wait for signal before proceeding
         WaitForSignal(&WriterMutex,&WriterCond);
         
-        int Traverser = 0;
-        
         // Unloads everything in LList
         while (1)
         {
             if (List_lockedCount(LList) == 0) break;
             
-            Traverser ++;
             Message = List_output(LList);
+            
+            char fullMessage[512];
+            snprintf(fullMessage, sizeof(fullMessage), "%s: %s", ForeignHost, Message);
 
             if(!Message)
             {
@@ -48,7 +48,7 @@ static void* WriteUnload(){
                 break;
             }
 
-            int writeVar = write(1, Message, strlen(Message)); // will put the message from first LL onto the screen
+            int writeVar = write(1, fullMessage, strlen(fullMessage)); // will put the message from first LL onto the screen
             if(writeVar == -1){
                 exit(-1);
             }
@@ -70,9 +70,10 @@ static void* WriteUnload(){
 }
 
 // <summary> Sets up writer with a linked list and creates a thread with unload function
-void SetupWriter(List* ListArg){
+void SetupWriter(char* HostArg, List* ListArg){
 
     LList = ListArg;
+    ForeignHost = HostArg;
 
     int writingThread =  pthread_create(&Writer, NULL, WriteUnload, NULL);
     if(writingThread != 0){

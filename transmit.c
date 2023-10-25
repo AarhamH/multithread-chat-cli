@@ -24,11 +24,11 @@ static char* Message;
 struct addrinfo Hints, *ListTraverse;
 
 // what
-int NumBytes;
+int Bytes;
 int GetAddress;
 
 
-// Threads
+// Mutual exclusions
 static pthread_mutex_t SendAvailableCondMutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t SendAvailableCond = PTHREAD_COND_INITIALIZER;
 
@@ -62,7 +62,6 @@ int TSetupSocket(int Fd)
 // <summary> This method trims the messages one by one until none is left. Called by SetupUnload()
 void* TUnloadMessages()
 {
-        int Iteration = 0;
         int ListCount;
         
         char hostname[256];
@@ -74,7 +73,6 @@ void* TUnloadMessages()
 
         while ((ListCount = List_lockedCount(LList)) != 0) 
         {
-            Iteration++;
 
             // Getting message from list
             Message = List_output(LList);
@@ -84,11 +82,8 @@ void* TUnloadMessages()
                 break;
             }
 
-            char fullMessage[512];
-            snprintf(fullMessage, sizeof(fullMessage), "%s: %s", hostname, Message);
-
             // Sending
-            NumBytes = sendto(SocketEndPoint, fullMessage, strlen(fullMessage), 0, ListTraverse->ai_addr, ListTraverse->ai_addrlen);
+            Bytes = sendto(SocketEndPoint, Message, strlen(Message), 0, ListTraverse->ai_addr, ListTraverse->ai_addrlen);
 
             // Check for exit code
             // Ends the thread if exit code is passed in the first iteration of the read
@@ -103,7 +98,7 @@ void* TUnloadMessages()
             Message = NULL;
 
             // Error checking recvfrom
-            if (NumBytes == -1) {
+            if (Bytes == -1) {
                 perror("sender: sendto error");
                 exit(-1);
             }

@@ -33,7 +33,7 @@ int main (int argc, char * argv[])
     SetupRead(list);
     SetupTransmit(theirHostname, theirPort, list);
     SetupReceiver(myPort, list);
-    SetupWriter(list);
+    SetupWriter(theirHostname,list);
 
     // Cleans up the threads
     CloseRead();

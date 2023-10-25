@@ -2,7 +2,7 @@
 #define WRITE
 
 void SignalWriter();
-void SetupWriter(List* l);
+void SetupWriter(char* HostArg, List* l);
 void CancelWriter();
 void CloseWriter();
 
