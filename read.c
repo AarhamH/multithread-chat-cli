@@ -15,7 +15,7 @@ char* Message;
 char BufferStorage[256];
 int Bytes;
 
-
+// <summary> Initializes space to read
 int RdSetBytes(int BytesArg)
 {
     memset(BufferStorage, 0, 256);
@@ -23,6 +23,7 @@ int RdSetBytes(int BytesArg)
     return BytesArg;
 }
 
+// <summary> Allocate space based on the bytes receieved
 char* RdSetMessageBuffer(char* MessageArg, int BytesArg)
 {
   MessageArg = (char*)malloc(sizeof(char) * (BytesArg + 1));
@@ -32,6 +33,8 @@ char* RdSetMessageBuffer(char* MessageArg, int BytesArg)
   return MessageArg;
 }
 
+
+// <summary> Unloads all of the messages until enter is pressed or ! is inputted
 static void* ReadUnload() {
     while (1) {
 
@@ -67,6 +70,8 @@ static void* ReadUnload() {
     return NULL;
 }
 
+
+// <summary> Reader constructor
 void SetupRead(List* ListArg) {
     LList = ListArg;
 
@@ -77,11 +82,14 @@ void SetupRead(List* ListArg) {
     }
 }
 
+
 void CancelRead() 
 {
     pthread_cancel(Reader);
 }
 
+
+// <summary> Reader Destructor
 void CloseRead() 
 {
     pthread_join(Reader, NULL);
