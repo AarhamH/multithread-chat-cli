@@ -67,7 +67,7 @@ void* TUnloadMessages()
         char hostname[256];
         if (gethostname(hostname, sizeof(hostname)) != 0) 
         {
-            printf("Error: Wrong hostname")
+            printf("Error: Wrong hostname");
             exit(-1);
         }
 
