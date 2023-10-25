@@ -11,8 +11,7 @@
 // Launches the s-talk program
 int main (int argc, char * argv[])
 {
-    printf("Hello User! To use s-talk, compile using the following:\n ");
-    printf("./s-talk [your port] [receiving host] [receiving port] \n ");
+    printf("Hello User! To use s-talk, begin typing.\n ");
 
     if (argc!=4)
     {
