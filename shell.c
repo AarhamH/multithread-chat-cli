@@ -11,16 +11,15 @@
 // Launches the s-talk program
 int main (int argc, char * argv[])
 {
-    // Checks if arguments are correct
+    printf("Hello User! To use s-talk, compile using the following:\n ");
+    printf("./s-talk [your port] [receiving host] [receiving port] \n ");
+
     if (argc!=4)
     {
-        printf("Please enter valid arguments \n");
-        printf("Valid argument strucure is: \n");
-        printf("s-talk [my port number] [remote machine name] [remote port number]\n");
+        printf("Invalid Credentials. Try Again\n");
         return -1;
     }
 
-    // Storing arguments
     char* myPort = argv[1];
     char* theirHostname = argv[2];
     char* theirPort = argv[3];
@@ -28,21 +27,16 @@ int main (int argc, char * argv[])
     // Creates a shared list
     List* list = List_create();
 
-    // Initializes the four modules
-    // Modules are running in an infinite loop, they will exit when given the exit code "!"
     SetupRead(list);
     SetupTransmit(theirHostname, theirPort, list);
     SetupReceiver(myPort, list);
     SetupWriter(theirHostname,list);
 
-    // Cleans up the threads
     CloseRead();
     CloseTransmit();
     CloseReceiver();
     CloseWriter();
 
-    // Frees the list
-    // At this point, the list should already be empty
     List_free(list, free);
 
     return 0;
