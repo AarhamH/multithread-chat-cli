@@ -18,7 +18,7 @@
 
 
 static int SocketFD;
-static struct addrinfo Hints, *ServInfo, *P;
+static struct addrinfo Hints, *ServInfo, *Travis;
 static char* UsefulPort;
 static List* LList;
 static pthread_t ReceiverThread;
@@ -42,25 +42,27 @@ struct addrinfo RSetupHints(struct addrinfo HintsArg)
     return HintsArg;
 }
 
+
+// <summary> Loops through potential sockets until one hits
 int RSetupSocket(int Fd)
 {
 
-  P = ServInfo;
-  while (P != NULL) {
-      Fd = socket(P->ai_family, P->ai_socktype, P->ai_protocol);
+  Travis = ServInfo;
+  while (Travis != NULL) {
+      Fd = socket(Travis->ai_family, Travis->ai_socktype, Travis->ai_protocol);
   
       if (Fd == -1) {
           printf("Error: socket failed to create");
-          P = P->ai_next;
+          Travis = Travis->ai_next;
           continue;
       }
   
-      BindVal = bind(Fd, P->ai_addr, P->ai_addrlen);
+      BindVal = bind(Fd, Travis->ai_addr, Travis->ai_addrlen);
   
       if (BindVal == -1) {
           close(SocketFD);
           printf("Error: socket could not bind");
-          P = P->ai_next;
+          Travis = Travis->ai_next;
           continue;
       }
       break;
@@ -69,6 +71,8 @@ int RSetupSocket(int Fd)
   return Fd;
 }
 
+
+// <summary> Establish bytes to potentially receive
 int RSetBytes(int ByteArg)
 {
   memset(&Buf, 0, 256);
@@ -91,6 +95,8 @@ int containsSequence(const char *str) {
     return 0;
 }
 
+
+// <summary> constantly input messages to list, until either enter is pressed or ! is inputted
 void* RLoadMessages()
 {
         while (1)
@@ -130,6 +136,7 @@ void* RLoadMessages()
     return NULL;
 }
 
+// <summary> Establishes Socket and load messages
 static void* ReceiverLoad(void* unused)
 {
 
@@ -144,7 +151,7 @@ static void* ReceiverLoad(void* unused)
 
     SocketFD = RSetupSocket(SocketFD);
 
-    if (P == NULL)
+    if (!Travis)
     {
         printf("Error: socket could not bind");
         exit(-1);
@@ -159,6 +166,7 @@ static void* ReceiverLoad(void* unused)
     return NULL;
 }
 
+// <summary> Constructor for receiver
 void SetupReceiver(char* PortArg, List* ListArg)
 {
     UsefulPort = PortArg;
@@ -176,6 +184,7 @@ void CancelReceiver()
     pthread_cancel(ReceiverThread);
 }
 
+// <summary> Destructor for receiver
 void CloseReceiver()
 {
     freeaddrinfo(ServInfo);
