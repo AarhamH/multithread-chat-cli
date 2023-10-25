@@ -10,7 +10,7 @@
 #include "transmit.h"
 
 static List* LList;
-static pthread_t ReaderThread;
+static pthread_t Reader;
 char* Message;
 char BufferStorage[256];
 int Bytes;
@@ -35,10 +35,7 @@ char* RdSetMessageBuffer(char* MessageArg, int BytesArg)
 static void* ReadUnload() {
     while (1) {
 
-        int Iteration = 0;
-
         while (1) {
-            Iteration++;
 
             Bytes = RdSetBytes(Bytes);
             if (Bytes == -1) {
@@ -61,7 +58,7 @@ static void* ReadUnload() {
               exit(1);
             }
 
-            if (BufferStorage[Bytes - 1] == '\n' || Iteration == 100) {
+            if (BufferStorage[Bytes - 1] == '\n') {
                 SignalTransmit();
                 break;
             }
@@ -73,7 +70,7 @@ static void* ReadUnload() {
 void SetupRead(List* ListArg) {
     LList = ListArg;
 
-    int ReadingThread =  pthread_create(&ReaderThread, NULL, ReadUnload, NULL);
+    int ReadingThread =  pthread_create(&Reader, NULL, ReadUnload, NULL);
     if (ReadingThread != 0) {
         printf("Error: Threads not created properly");
         exit(-1);
@@ -82,10 +79,10 @@ void SetupRead(List* ListArg) {
 
 void CancelRead() 
 {
-    pthread_cancel(ReaderThread);
+    pthread_cancel(Reader);
 }
 
 void CloseRead() 
 {
-    pthread_join(ReaderThread, NULL);
+    pthread_join(Reader, NULL);
 }
