@@ -48,7 +48,7 @@ static void* WriteUnload(){
                 break;
             }
 
-            int writeVar = write(1, fullMessage, strlen(fullMessage)); // will put the message from first LL onto the screen
+            int writeVar = write(1, fullMessage, strlen(fullMessage));
             if(writeVar == -1){
                 exit(-1);
             }
