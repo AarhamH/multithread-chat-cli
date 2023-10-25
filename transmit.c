@@ -51,7 +51,7 @@ int TSetupSocket(int Fd)
         Fd = socket(ListTraverse->ai_family, ListTraverse->ai_socktype, ListTraverse->ai_protocol);
 
         if (Fd == -1) {
-            perror("sender: socket() error");
+            printf("Error: socket did not set up or find empty");
             continue;
         }
         break;
@@ -67,7 +67,7 @@ void* TUnloadMessages()
         char hostname[256];
         if (gethostname(hostname, sizeof(hostname)) != 0) 
         {
-            perror("sender: gethostname error");
+            printf("Error: Wrong hostname")
             exit(-1);
         }
 
@@ -78,7 +78,7 @@ void* TUnloadMessages()
             Message = List_output(LList);
 
             if (Message == NULL) {
-                fprintf(stderr, "sender: dequeue error, queue empty.\n");
+                printf("Error: Message is not allocated well.");
                 break;
             }
 
@@ -99,7 +99,7 @@ void* TUnloadMessages()
 
             // Error checking recvfrom
             if (Bytes == -1) {
-                perror("sender: sendto error");
+                printf("Error: bytes are bad");
                 exit(-1);
             }
         }
@@ -112,14 +112,14 @@ static void* TransmitUnload() {
     Hints = TSetupHints(Hints);
 
     if ((GetAddress = getaddrinfo(Hostname, Port, &Hints, &ServInfo)) != 0) {
-        fprintf(stderr, "sender: getaddrinfo error: %s\n", gai_strerror(GetAddress));
+        printf("Error: GAI Value bad");
         exit(-1);
     }
 
     SocketEndPoint = TSetupSocket(SocketEndPoint);
 
     if (ListTraverse == NULL) {
-        fprintf(stderr, "sender: failed to create socket");
+        printf("Error: Socket did not create");
         exit(-1);
     }
 
@@ -159,7 +159,7 @@ void SetupTransmit(char* HostnameArg, char* PortArg, List* ListArg) {
 
     int StVal = pthread_create(&SenderThread, NULL, TransmitUnload, NULL);
     if (StVal != 0) {
-        perror("sender: thread creation error");
+        printf("Error: transmitter did not create");
         exit(-1);
     }
 }
