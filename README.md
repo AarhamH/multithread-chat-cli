@@ -8,4 +8,5 @@ This program contains 4 threads:
 4. Read: Handles message output
 
 To use the chat, compile all C components using make and run the following command:
+
 ./s-talk [your port number] [receiver hostname] [receiver port number]
