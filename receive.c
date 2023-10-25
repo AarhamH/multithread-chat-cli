@@ -93,11 +93,8 @@ int containsSequence(const char *str) {
 
 void* RLoadMessages()
 {
-        int Iteration = 0;
         while (1)
         {
-            Iteration++;
-
             Bytes = RSetBytes(Bytes);
 
             if (Bytes == -1)
@@ -116,7 +113,7 @@ void* RLoadMessages()
                 printf("Error: buffer overloaded");
             }
 
-            if (containsSequence(Message))
+            if(!strcmp(Message, "!\n") && strlen(Message)==2)
             {
                 SignalWriter();
                 CancelRead();
@@ -124,7 +121,7 @@ void* RLoadMessages()
                 exit(1);
             }
 
-            if (Buf[Bytes - 1] == '\n' || Iteration == 100)
+            if (Buf[Bytes - 1] == '\n')
             {
                 break;
             }
