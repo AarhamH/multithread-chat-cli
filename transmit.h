@@ -1,7 +1,7 @@
 #ifndef TRANSMIT
 #define TRANSMIT
 
-void SetupTransmit(char* hostnm, char* p, List* l);
+void SetupTransmit(char* HostArg, char* PortArg, List* ListArg);
 void CancelTransmit();
 void CloseTransmit();
 void SignalTransmit();

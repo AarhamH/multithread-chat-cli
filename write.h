@@ -1,8 +1,8 @@
 #ifndef WRITE
 #define WRITE
 
-void SignalWriter();
-void SetupWriter(char* HostArg, List* l);
+void SignalWriter(); 
+void SetupWriter(char* HostArg, List* ListArg);
 void CancelWriter();
 void CloseWriter();
 

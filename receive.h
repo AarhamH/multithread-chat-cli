@@ -1,7 +1,7 @@
 #ifndef RECEIVE
 #define RECEIVE
 
-void SetupReceiver(char* myP, List* l);
+void SetupReceiver(char* PortArg, List* ListArg);
 void CloseReceiver();
 void CancelReceiver();
 

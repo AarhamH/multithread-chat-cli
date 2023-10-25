@@ -1,7 +1,7 @@
 #ifndef READ
 #define READ
 
-void SetupRead(List* l);
+void SetupRead(List* ListArg);
 void CloseRead();
 void CancelRead();
 
